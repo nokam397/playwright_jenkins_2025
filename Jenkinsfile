@@ -8,24 +8,31 @@ pipeline {
     stages {
         stage('Installation') {
             steps {
-                
                 sh 'npm ci'
             }
-        }        
+        }
 
-        stage('Generate Report') {
+        stage('Tests + Reports') {
             steps {
                 sh 'chmod +x ./generate_rapport.sh'
                 sh './generate_rapport.sh'
             }
         }
 
+        stage('Publish Allure Report') {
+            steps {
+                allure([
+                    results: [[path: 'allure-results']],
+                    reportBuildPolicy: 'ALWAYS'
+                ])
+            }
+        }
     }
 
     post {
         always {
-            
             archiveArtifacts artifacts: 'playwright-report/**', allowEmptyArchive: true
+            archiveArtifacts artifacts: 'allure-report/**', allowEmptyArchive: true
         }
     }
 }
