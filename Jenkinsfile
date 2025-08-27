@@ -19,6 +19,12 @@ pipeline {
                 sh './generate_rapport.sh'
             }
         }
+
+        stage('generation rapport 2'){
+            steps{
+                sh 'npx playwright test --reporter=line'
+            }
+        }
     }
 
     post {
