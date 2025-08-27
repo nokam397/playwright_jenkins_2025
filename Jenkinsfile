@@ -22,6 +22,8 @@ pipeline {
         stage('Publish Allure Report') {
             steps {
                 allure([
+                    includeProperties: false,
+                    jdk: '',
                     results: [[path: 'allure-results']],
                     reportBuildPolicy: 'ALWAYS'
                 ])
@@ -31,9 +33,7 @@ pipeline {
 
     post {
         always {
-            // Archive le rapport Playwright HTML
             archiveArtifacts artifacts: 'playwright-report/**', allowEmptyArchive: true
-            // Archive aussi les fichiers Allure Results (optionnel)
             archiveArtifacts artifacts: 'allure-results/**', allowEmptyArchive: true
         }
     }
