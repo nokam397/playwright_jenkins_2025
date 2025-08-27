@@ -3,7 +3,7 @@ pipeline {
         docker {
             
             image 'mcr.microsoft.com/playwright:v1.49.0-jammy'
-            args '--ipc=host' 
+            
         }
     }
 
