@@ -5,7 +5,18 @@ pipeline {
         }
     }
 
+    options {
+        skipDefaultCheckout(true) // on gère checkout explicitement
+    }
+
     stages {
+        stage('Checkout SCM') {
+            steps {
+                // Vérifie que Git est bien installé dans Jenkins
+                checkout scm
+            }
+        }
+
         stage('Installation') {
             steps {
                 sh 'npm ci'
@@ -22,6 +33,7 @@ pipeline {
         stage('Publish Allure Report') {
             steps {
                 script {
+                    // Plugin Allure Jenkins
                     allure([
                         includeProperties: false,
                         jdk: '',
@@ -35,8 +47,16 @@ pipeline {
 
     post {
         always {
+            // Archive le rapport Playwright HTML
             archiveArtifacts artifacts: 'playwright-report/**', allowEmptyArchive: true
+            // Archive aussi les fichiers Allure Results
             archiveArtifacts artifacts: 'allure-results/**', allowEmptyArchive: true
+        }
+        success {
+            echo 'Build terminé avec succès ✅'
+        }
+        failure {
+            echo 'Build échoué ❌'
         }
     }
 }
