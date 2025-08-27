@@ -29,8 +29,8 @@ pipeline {
 
         stage('Generate Report') {
             steps {
-                sh 'chmod +x generate_rapport.sh'
-                sh 'generate_rapport.sh'
+                sh 'chmod +x ./generate_rapport.sh'
+                sh './generate_rapport.sh'
             }
         }
     }
