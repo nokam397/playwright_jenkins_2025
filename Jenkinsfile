@@ -31,8 +31,10 @@ pipeline {
 
     post {
         always {
+            // Archive le rapport Playwright HTML
             archiveArtifacts artifacts: 'playwright-report/**', allowEmptyArchive: true
-            archiveArtifacts artifacts: 'allure-report/**', allowEmptyArchive: true
+            // Archive aussi les fichiers Allure Results (optionnel)
+            archiveArtifacts artifacts: 'allure-results/**', allowEmptyArchive: true
         }
     }
 }

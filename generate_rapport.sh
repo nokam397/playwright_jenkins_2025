@@ -1,5 +1,13 @@
 #!/bin/bash
+set -e
+
+# Installer les dépendances
 npm ci
 npx playwright install --with-deps
-npx playwright test 
-allure generate ./allure-results -o ./allure-report --clean
+
+# Lancer les tests Playwright
+# Les reporters configurés dans playwright.config.ts génèrent déjà :
+# - JUnit (playwright-report/results.xml)
+# - Allure (allure-results/)
+# - HTML (playwright-report/)
+npx playwright test
