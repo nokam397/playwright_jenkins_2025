@@ -1,16 +1,14 @@
 pipeline {
     agent {
         docker {
-            
             image 'mcr.microsoft.com/playwright:v1.49.0-jammy'
-            
         }
     }
 
     stages {
         stage('Installation') {
             steps {
-               
+                
                 sh 'npm ci'
             }
         }
@@ -25,12 +23,22 @@ pipeline {
         stage('Run Playwright Tests') {
             steps {
                 
-                sh 'npx playwright test'
+                sh 'npx playwright test --reporter=html'
             }
         }
 
-        
+        stage('Generate Report') {
+            steps {
+                sh 'chmod +x generate_rapport.sh'
+                sh 'generate_rapport.sh'
+            }
+        }
     }
 
-    
+    post {
+        always {
+            
+            archiveArtifacts artifacts: 'playwright-report/**', allowEmptyArchive: true
+        }
+    }
 }
