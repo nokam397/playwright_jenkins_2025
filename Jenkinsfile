@@ -11,16 +11,7 @@ pipeline {
                 
                 sh 'npm ci'
             }
-        }
-
-        stage('Install Browsers') {
-            steps {
-                
-                sh 'npx playwright install --with-deps'
-            }
-        }
-
-        
+        }        
 
         stage('Generate Report') {
             steps {
