@@ -20,11 +20,6 @@ pipeline {
             }
         }
 
-        stage('generation rapport 2'){
-            steps{
-                sh 'npx playwright test --reporter=line'
-            }
-        }
     }
 
     post {
