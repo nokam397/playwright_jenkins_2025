@@ -21,12 +21,14 @@ pipeline {
 
         stage('Publish Allure Report') {
             steps {
-                allure([
-                    includeProperties: false,
-                    jdk: '',
-                    results: [[path: 'allure-results']],
-                    reportBuildPolicy: 'ALWAYS'
-                ])
+                script {
+                    allure([
+                        includeProperties: false,
+                        jdk: '',
+                        results: [[path: 'allure-results']],
+                        reportBuildPolicy: 'ALWAYS'
+                    ])
+                }
             }
         }
     }
