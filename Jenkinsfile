@@ -1,9 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'mcr.microsoft.com/playwright:v1.49.0-jammy'
-        }
-    }
+    agent any  // l'agent hôte gère le checkout Git
 
     options {
         skipDefaultCheckout(true) // on gère checkout explicitement
@@ -12,18 +8,28 @@ pipeline {
     stages {
         stage('Checkout SCM') {
             steps {
-                // Vérifie que Git est bien installé dans Jenkins
+                echo 'Checkout du code depuis Git...'
                 checkout scm
             }
         }
 
         stage('Installation') {
+            agent {
+                docker { 
+                    image 'mcr.microsoft.com/playwright:v1.49.0-jammy'
+                }
+            }
             steps {
                 sh 'npm ci'
             }
         }
 
         stage('Tests + Reports') {
+            agent {
+                docker {
+                    image 'mcr.microsoft.com/playwright:v1.49.0-jammy'
+                }
+            }
             steps {
                 sh 'chmod +x ./generate_rapport.sh'
                 sh './generate_rapport.sh'
@@ -49,7 +55,7 @@ pipeline {
         always {
             // Archive le rapport Playwright HTML
             archiveArtifacts artifacts: 'playwright-report/**', allowEmptyArchive: true
-            // Archive aussi les fichiers Allure Results
+            // Archive les fichiers Allure Results
             archiveArtifacts artifacts: 'allure-results/**', allowEmptyArchive: true
         }
         success {
