@@ -5,10 +5,6 @@ pipeline {
         }
     }
 
-    environment {
-        PATH = "/usr/bin:${env.PATH}"  // utile si allure CLI est installé
-    }
-
     stages {
         stage('Installation') {
             steps {
@@ -17,7 +13,7 @@ pipeline {
             }
         }
 
-        stage('Run Tests') {
+        stage('Run Tests & Generate Allure Report') {
             steps {
                 sh 'chmod +x ./generate_rapport.sh'
                 sh './generate_rapport.sh'
@@ -26,14 +22,18 @@ pipeline {
 
         stage('Publish Allure Report') {
             steps {
-                // Archiver les fichiers Allure
+                // Archiver les résultats et le rapport Allure
                 archiveArtifacts artifacts: 'allure-results/**', allowEmptyArchive: true
+                archiveArtifacts artifacts: 'allure-report/**', allowEmptyArchive: true
 
-                // Publier le rapport via le plugin Allure Jenkins
-                allure([
-                    includeProperties: false,
-                    jdk: '',
-                    results: [[path: 'allure-results']]
+                // Publier le rapport HTML généré
+                publishHTML(target: [
+                    allowMissing: false,
+                    alwaysLinkToLastBuild: true,
+                    keepAll: true,
+                    reportDir: 'allure-report',
+                    reportFiles: 'index.html',
+                    reportName: 'Allure Report'
                 ])
             }
         }
@@ -41,7 +41,7 @@ pipeline {
 
     post {
         always {
-            echo 'Pipeline terminé - Rapport Allure généré.'
+            echo '✅ Pipeline terminé - Rapport Allure disponible dans Jenkins.'
         }
     }
 }
