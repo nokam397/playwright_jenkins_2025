@@ -5,6 +5,10 @@ pipeline {
         }
     }
 
+    environment {
+        PATH = "/usr/bin:${env.PATH}"  // utile si allure CLI est installé
+    }
+
     stages {
         stage('Installation') {
             steps {
@@ -20,19 +24,16 @@ pipeline {
             }
         }
 
-        stage('Publish Report') {
+        stage('Publish Allure Report') {
             steps {
-                // Archiver les fichiers du rapport
-                archiveArtifacts artifacts: 'playwright-report/**', allowEmptyArchive: true
+                // Archiver les fichiers Allure
+                archiveArtifacts artifacts: 'allure-results/**', allowEmptyArchive: true
 
-                // Publier le rapport HTML dans Jenkins
-                publishHTML(target: [
-                    allowMissing: false,
-                    alwaysLinkToLastBuild: true,
-                    keepAll: true,
-                    reportDir: 'playwright-report',
-                    reportFiles: 'index.html',
-                    reportName: 'Playwright Test Report'
+                // Publier le rapport via le plugin Allure Jenkins
+                allure([
+                    includeProperties: false,
+                    jdk: '',
+                    results: [[path: 'allure-results']]
                 ])
             }
         }
@@ -40,7 +41,7 @@ pipeline {
 
     post {
         always {
-            echo 'Pipeline terminé - Rapport généré.'
+            echo 'Pipeline terminé - Rapport Allure généré.'
         }
     }
 }

@@ -1,5 +1,6 @@
 #!/bin/bash
 npm ci
 npx playwright install --with-deps
-npx playwright test --reporter=html
 
+# Exécution des tests avec Allure
+npx playwright test --reporter=line,allure-playwright
