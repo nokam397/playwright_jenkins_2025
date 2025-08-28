@@ -11,6 +11,7 @@ pipeline {
                 sh '''
                     npm ci
                     npx playwright install --with-deps
+                    # Installer allure-commandline (Node.js, pas besoin de Java)
                     npm install -g allure-commandline --save-dev
                 '''
             }
@@ -30,6 +31,7 @@ pipeline {
                 archiveArtifacts artifacts: 'allure-results/**', allowEmptyArchive: true
                 archiveArtifacts artifacts: 'allure-report/**', allowEmptyArchive: true
 
+                // Publication HTML au lieu du plugin Allure
                 publishHTML(target: [
                     allowMissing: false,
                     alwaysLinkToLastBuild: true,
@@ -44,7 +46,7 @@ pipeline {
 
     post {
         always {
-            echo '✅ Pipeline terminé - Rapport Allure disponible dans Jenkins.'
+            echo '✅ Pipeline terminé - Rapport Allure disponible dans Jenkins (HTML direct, sans Java).'
         }
     }
 }
