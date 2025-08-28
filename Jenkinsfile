@@ -11,28 +11,23 @@ pipeline {
                 sh '''
                     npm ci
                     npx playwright install --with-deps
-                    # installation d'allure CLI si absent
                     npm install -g allure-commandline --save-dev
                 '''
             }
         }
 
-        stage('Run Tests') {
+        stage('Run Tests & Generate Allure Report') {
             steps {
-                sh '''
-                    chmod +x ./generate_rapport.sh
-                    ./generate_rapport.sh
-                '''
+                sh 'chmod +x ./generate_rapport.sh'
+                sh './generate_rapport.sh'
             }
         }
 
         stage('Publish Allure Report') {
             steps {
-                // Archiver les résultats et rapports
                 archiveArtifacts artifacts: 'allure-results/**', allowEmptyArchive: true
                 archiveArtifacts artifacts: 'allure-report/**', allowEmptyArchive: true
 
-                // Publier le rapport
                 publishHTML(target: [
                     allowMissing: false,
                     alwaysLinkToLastBuild: true,
